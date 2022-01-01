@@ -1,0 +1,47 @@
+package testCases;
+
+import java.awt.Desktop;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import org.testng.annotations.Test;
+
+import com.aventstack.extentreports.ExtentReports;
+import com.aventstack.extentreports.ExtentTest;
+import com.aventstack.extentreports.reporter.ExtentSparkReporter;
+import com.aventstack.extentreports.reporter.configuration.Theme;
+
+public class E01_ExtentReportsBasics {
+	
+	@Test
+	public void extentDemo() throws IOException
+	{
+		ExtentReports extent = new ExtentReports();
+		String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH.mm.ss").format(new Date());
+		String reportName = "ExtentReport-Basic"+timeStamp+".html";
+		String path = System.getProperty("user.dir")+"\\reports\\"+reportName;
+		ExtentSparkReporter reporter = new ExtentSparkReporter(path); //report file path
+		reporter.config().setTheme(Theme.DARK);		//configure
+		reporter.config().setDocumentTitle("Basic");
+		reporter.config().setReportName("Reports Demo");
+		extent.attachReporter(reporter);			//attach
+
+		ExtentTest test = extent.createTest("Login Test");		// create a test node in the report
+		test.info("login test started successfully");			// similar to log
+		test.info("URL loaded");
+		test.info("Entered credentials");
+		test.pass("login test completed successfully");			// pass
+		
+		ExtentTest test1 = extent.createTest("Homepage Test");
+		test1.info("Homepage test started successfully");
+		test1.info("URL loaded");
+		test1.info("Entered values");
+		test1.fail("Homepage test failed");
+		
+		extent.flush();											//pushes all nodes created so far into report. MANDATORY step.
+		Desktop.getDesktop().browse(new File(path).toURI());	//open report in default browser
+	}
+
+}
